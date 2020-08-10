@@ -1,0 +1,25 @@
+{
+  "name": "eslint-plugin-destructuring-newline",
+  "version": "0.0.1",
+  "description": "Enforce placing destructuring properties on separate lines",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "destructuring",
+    "newline"
+  ],
+  "scripts": {
+    "test": "mocha test/**/*.js --reporter spec"
+  },
+  "devDependencies": {
+    "@kusotenpa/eslint-plugin": "1.1.0",
+    "eslint": "7.6.0",
+    "eslint-plugin-rulesdir": "0.1.0",
+    "mocha": "8.1.1"
+  },
+  "peerDependencies": {
+    "eslint": ">=7.0.0"
+  }
+}
