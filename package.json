@@ -1,8 +1,10 @@
 {
   "name": "eslint-plugin-destructuring-newline",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Enforce placing destructuring properties on separate lines",
   "main": "lib/index.js",
+  "repository": "git@github.com:kusotenpa/eslint-plugin-destructuring-newline.git",
+  "author": "tom",
   "license": "MIT",
   "keywords": [
     "eslint",
