@@ -1,0 +1,36 @@
+name: Create tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Bump <?>'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+          - prepatch
+          - preminor
+          - premajor
+
+jobs:
+  createTag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Bump
+        run: |
+          git config user.name "GitHub Action"
+          npm version ${{github.event.inputs.version}}
+      - name: Push
+        run: |
+          git push origin
+          git push origin --tags
