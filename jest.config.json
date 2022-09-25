@@ -1,0 +1,6 @@
+{
+  "testMatch": ["**/spec/*.ts"],
+  "transform": {
+    "^.+\\.ts$": "@swc/jest"
+  }
+}

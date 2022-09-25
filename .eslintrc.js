@@ -1,17 +1,20 @@
-const rulesDirPlugin = require('eslint-plugin-rulesdir')
-
-rulesDirPlugin.RULES_DIR = 'lib/rules'
-
 module.exports = {
   extends: [
     'plugin:@kusotenpa/base',
+    'plugin:@kusotenpa/+ts',
   ],
-  plugins: [ 'rulesdir' ],
+  plugins: [
+    'local-rules',
+  ],
+  parserOptions: {
+    project: './tsconfig.json',
+  },
   env: {
     es6: true,
     node: true,
   },
   rules: {
-    'rulesdir/object-property-newline': 2,
+    'destructuring-newline/object-property-newline': 0,
+    'local-rules/object-property-newline': 2,
   },
 }

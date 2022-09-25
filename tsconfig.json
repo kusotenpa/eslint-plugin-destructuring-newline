@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "lib": [ "es2022" ],
+    "target": "es2022",
+    "module": "CommonJS",
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "strict": true,
+  },
+  "include": [
+    ".",
+    ".eslintrc.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+

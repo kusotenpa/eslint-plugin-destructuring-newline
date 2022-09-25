@@ -1,8 +1,6 @@
-'use strict'
+import { RuleTester } from 'eslint'
 
-const RuleTester = require('eslint').RuleTester
-
-const rule = require('../../lib/rules/object-property-newline')
+import rule from '../index'
 
 const tester = new RuleTester({
   parserOptions: {

@@ -6,6 +6,13 @@ Enforce placing destructuring properties on separate lines.
 $ npm install --save-dev eslint eslint-plugin-destructuring-newline
 ```
 
+## Rules
+🔧: Fixable
+
+| Rule                                          | 🔧 |
+| --------------------------------------------- | --------- |
+| destructuring-newline/object-property-newline | 🔧         |
+
 ## Usage
 In your `.eslintrc`
 ```
@@ -14,6 +21,7 @@ In your `.eslintrc`
     "destructuring-newline"
   ],
   "rules": {
+    "object-curly-newline": 2, // recommended
     "destructuring-newline/object-property-newline": 2
   }
 }
