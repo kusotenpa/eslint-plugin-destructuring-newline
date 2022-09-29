@@ -73,4 +73,4 @@ function fix(params: FixParams) {
   })
 }
 
-module.exports = rule
+export default rule

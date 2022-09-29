@@ -1,4 +1,4 @@
-const objectPropertyNewline = require('./rules/object-property-newline')
+import objectPropertyNewline from './rules/object-property-newline'
 
 module.exports = {
   rules: {
