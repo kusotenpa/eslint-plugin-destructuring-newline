@@ -1,19 +1,46 @@
 import type { Rule } from 'eslint'
-import type { ObjectPattern } from 'estree'
+import type {
+  AssignmentProperty,
+  RestElement,
+  ObjectPattern,
+} from 'estree'
+import 'core-js/features/array/at'
 
+type Options = {
+  maxProperties?: number
+  maxLength?: number
+}
+type Property = AssignmentProperty | RestElement
 type FixParams = {
   context: Rule.RuleContext
   node: ObjectPattern & Rule.NodeParentExtension
   index: number
+  propertiesList: Property[][]
+  maxProperties: number
 }
 
 const rule: Rule.RuleModule = {
   meta: {
     type: 'layout',
     messages: {
-      propertiesOnNewline: 'Destructuring properties must go on a new line.',
+      maxProperties: 'Destructuring properties must be {{maxProperties}} properties per line.',
     },
     fixable: 'whitespace',
+    schema: {
+      type: 'array',
+      minItems: 0,
+      maxItems: 1,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          maxProperties: {
+            type: 'integer',
+            minimum: 1,
+          },
+        },
+      },
+    },
   },
   create: context => {
     return {
@@ -22,11 +49,23 @@ const rule: Rule.RuleModule = {
           return
         }
 
-        for (let i = 1; i < node.properties.length; i++) {
-          fix({
+        const { maxProperties = 1 } = (context.options[ 0 ] ?? {}) as Options
+        const propertiesList = node.properties.reduce<Property[][]>((result, item, i) => {
+          const chunkIndex = Math.floor(i / maxProperties)
+
+          result[ chunkIndex ] ||= []
+          result[ chunkIndex ]!.push(item)
+
+          return result
+        }, [])
+
+        for (const index of propertiesList.keys()) {
+          checkMaxProperties({
             context,
             node,
-            index: i,
+            index,
+            propertiesList,
+            maxProperties,
           })
         }
       },
@@ -34,40 +73,50 @@ const rule: Rule.RuleModule = {
   },
 }
 
-function fix(params: FixParams) {
+function checkMaxProperties(params: FixParams) {
   const {
     context,
     node,
+    propertiesList,
     index,
+    maxProperties,
   } = params
 
+  const properties = propertiesList[ index ]!
+  const shouldNextLine = index === 0
+    ? false
+    : propertiesList[ index - 1 ]?.at(-1)?.loc?.end.line === properties[ 0 ]?.loc?.start.line
+
   const sourceCode = context.getSourceCode()
-  const prev = node.properties[ index - 1 ]
-  const current = node.properties[ index ]
+  const isSameLine = properties.every(property => {
+    return properties[ 0 ]?.loc?.start.line === property.loc?.end.line
+  })
 
-  if (!prev || !current) return
+  const isValid = !shouldNextLine && isSameLine
+  const firstProperty = properties[ 0 ]
+  const lastProperty = properties.at(-1)
 
-  const lastPrev = sourceCode.getLastToken(prev)
-  const firstCurrent = sourceCode.getFirstToken(current)
-
-  if (
-    !lastPrev
-    || !firstCurrent
-    || lastPrev.loc.end.line !== firstCurrent.loc.start.line
-  ) return
+  if (isValid || !firstProperty?.loc || !lastProperty?.loc) return
 
   context.report({
     node,
-    loc: firstCurrent.loc,
-    messageId: 'propertiesOnNewline',
+    loc: {
+      start: firstProperty.loc.start,
+      end: lastProperty.loc.end,
+    },
+    messageId: 'maxProperties',
+    data: {
+      maxProperties: maxProperties.toString(),
+    },
     fix(fixer) {
-      const comma = sourceCode.getTokenBefore(firstCurrent)
+      const nextLine = shouldNextLine ? '\n' : ''
+      const text = nextLine + properties.map(x => sourceCode.getText(x)).join(',')
 
-      if (!comma) return null
+      if (!firstProperty.range || !lastProperty.range) return null
 
       return fixer.replaceTextRange(
-        [ comma.range[ 1 ], firstCurrent.range[ 0 ] ],
-        '\n',
+        [ firstProperty.range[ 0 ], lastProperty.range[ 1 ] ],
+        text,
       )
     },
   })

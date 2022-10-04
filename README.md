@@ -30,12 +30,35 @@ In your `.eslintrc`
 ## Rule Details
 ```js
 // bad
-const { foo, bar } = obj
+const { a, b } = obj
 
 // good
-const { foo } = obj
+const { a } = obj
 const {
-    foo,
-    bar,
+    a,
+    b,
 } = obj
+```
+
+## Option
+### maxProperties
+Limit the number of properties per line.
+```js
+// "destructuring-newline/object-property-newline": [2, { maxProperties: 3 }]
+
+// bad
+const {
+  a,
+  b,
+  c,
+  d,
+} = obj
+
+// good
+const {
+  a, b, c,
+  d,
+} = obj
+
+const { a, b } = obj
 ```
